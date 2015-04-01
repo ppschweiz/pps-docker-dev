@@ -14,12 +14,24 @@ wordpress:
     - wordpress:/var/www/html
   links:
     - mysql:mysql
+    - slapd:ldap
   environment:
    WORDPRESS_DB_USER: root
    WORDPRESS_DB_PASSWORD: root
+   LDAP_BIND_DN: cn=admin,dc=piratenpartei,dc=ch
+   LDAP_BIND_PW: root
 mysql:
   image: mysql
   volumes:
     - mysql:/var/lib/mysql
   environment:
     MYSQL_ROOT_PASSWORD: root
+slapd:
+  image: ppschweiz/pps-slapd
+  volumes:
+    - slapd:/var/lib/ldap
+    - testdata/testdata.ldif:/slapd/import.ldif
+  environment:
+    LDAP_DOMAIN: piratenpartei.ch
+    LDAP_ORGANISATION: Piratenpartei Schweiz
+    LDAP_ROOTPASS: root
